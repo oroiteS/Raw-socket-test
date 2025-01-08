@@ -86,7 +86,7 @@ def parse_dns_response(data, transaction_id):
     return answers
 
 
-def dns_query(domain, dns_server="192.168.31.1"):
+def dns_query(domain, dns_server="8.8.8.8"):
     """发送DNS查询并接收响应"""
     # 创建UDP套接字
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

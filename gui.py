@@ -11,7 +11,7 @@ def check_ip(ip: str) -> bool:
     try:
         # 移除首尾空格并分割
         parts = ip.strip().split(".")
-        # 快速检查是否为4段
+        # 快速检查是否为4段 
         if len(parts) != 4:
             return False
         # 使用列表推导式和all函数简化检查
@@ -19,6 +19,25 @@ def check_ip(ip: str) -> bool:
     except:
         return False
 
+
+def check_domain(domain: str) -> bool:
+    """
+    检查域名格式是否正确
+    规则：
+    1. 只允许字母、数字、点和连字符
+    2. 不能以点或连字符开始/结束
+    3. 点不能连续出现
+    4. 每段长度在1-63之间
+    5. 总长度不超过253字符
+    """
+    if not domain or len(domain) > 253:
+        return False
+    
+    # 域名格式的正则表达式
+    pattern = r'^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]$'
+    
+    return bool(re.match(pattern, domain))
+    
 
 class App:
     def __init__(self, root):
@@ -32,7 +51,7 @@ class App:
         self.root.resizable(False, False)  # 禁止调整窗口大小
 
         # 配置网格布局权重
-        self.root.grid_columnconfigure(1, weight=1)  # 让第二列可以扩展
+        self.root.grid_columnconfigure(1, weight=1)
 
         # 创建和布局组件
         self._create_ip_port_section()
@@ -44,9 +63,10 @@ class App:
         """创建IP和端口相关的输入区域"""
         # 标签统一样式
         label_width = 10
-        label_padx = (20, 5)  # 左边距20，右边距5
-        entry_padx = (5, 20)  # 左边距5，右边距20
-
+        # 左边距20，右边距5
+        label_padx = (20, 5)  
+        # 左边距5，右边距20
+        entry_padx = (5, 20)  
         # 本机地址
         self.local_ip_label = tk.Label(self.root, text="本机地址", width=label_width, anchor='e')
         self.local_ip_label.grid(row=0, column=0, sticky=tk.E, padx=label_padx, pady=5)
@@ -186,7 +206,11 @@ class App:
         if not destination_ip:
             messagebox.showerror(title="error", message="请输入目的主机地址")
             return
-        elif selected != 'DNS' and not check_ip(destination_ip):
+        elif selected == 'DNS':
+            if not check_domain(destination_ip):
+                messagebox.showerror(title="error", message="请输入正确的域名格式！")
+                return
+        elif not check_ip(destination_ip):
             messagebox.showerror(title="error", message="目标ip地址不正确！")
             return
 
